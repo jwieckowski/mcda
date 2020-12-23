@@ -3,93 +3,94 @@ script to calculate MCDA VIKOR method rankings
 """
 import numpy as np
 
-MenInd = np.array([
-    [15, 32, 782, 1],
-    [14, 32, 780, 1],
-    [13, 32, 769, 2],
-    [12, 32, 769, 2],
-    [11, 32, 765, 2],
-    [10, 32, 735, 2],
-    [9,  31, 707, 2],
-    [8,  30, 686, 2],
-    [7,  29, 662, 3],
-    [6,  27, 614, 5],
-    [5,  25, 580, 6]
-])
-types = ['cost', 'profit', 'profit', 'cost']
+class VIKOR:
+    def __init__(self, matrix, types, weights, precision):
+        """
 
-def get_characteristic_values(matrix, types):
-    """
+        :param matrix: decision matrix
+        :param types: types of criteria
+        :param weights: weights for criteria
+        :param precision: precision of floating point
+        """
+        self.matrix = matrix
+        self.types = types
+        self.weights = weights
+        self.precision = precision
 
-    :param matrix:
-    :param types:
-    :return:
-    """
-    m, n = matrix.shape
-    fP = []
-    fM = []
-    for i in range(n):
-        if types[i] == 'profit':
-            fP.append(max(matrix[:, i]))
-            fM.append(min(matrix[:, i]))
-        elif types[i] == 'cost':
-            fP.append(min(matrix[:, i]))
-            fM.append(max(matrix[:, i]))
-        else:
-            print('Wrong type of criteria ' + str(i+1))
-    return fP, fM
+    def get_extreme_values(self):
+        """
+        calculate two lists of maximal and minimal values from row of decision matrix
+        :return: lists of maximum and minimum values
+        """
 
-def get_difference(matrix, values):
+        m, n = self.matrix.shape
+        fP, fM = [], []
+        for i in range(n):
+            if self.types[i] == 'profit':
+                fP.append(max(self.matrix[:, i]))
+                fM.append(min(self.matrix[:, i]))
+            elif self.types[i] == 'cost':
+                fP.append(min(self.matrix[:, i]))
+                fM.append(max(self.matrix[:, i]))
+            else:
+                print('Wrong type of criteria ' + str(i + 1))
+        return fP, fM
 
-    results = []
-    m, n = matrix.shape
-    for i in range(n):
-        results.append(values[i] - matrix[:, i])
-    return np.array(results).T
+    def get_difference(self):
+        """
+        calculate difference between list with maximal value and particular value in matrix
+        :return: matrix with difference values
+        """
 
-def get_weighted_value(matrix, fP, fM, weights):
+        results = []
+        m, n = self.matrix.shape
+        for i in range(n):
+            results.append(self.FP[i] - self.matrix[:, i])
+        return np.array(results).T
 
-    results = []
-    m, n = matrix.shape
-    for i in range(n):
-        f = fP[i] - fM[i]
-        if f == 0:
-            f = 10 ** -10
-        results.append(weights[i] * (matrix[:, i]) / f)
-    return np.array(results).T
+    def get_weighted_matrix(self):
+        """
+        calculate weights list based on difference between minimal and maximal values lists
+        :return: list with weighted values
+        """
 
-def calculate_rankings(matrix, Rd):
-    m, n = matrix.shape
-    S = np.round(matrix.sum(axis=1), Rd)
-    R = np.array([round(max(matrix[i, :]), Rd) for i in range(m)])
+        results = []
+        m, n = self.difference.shape
+        for i in range(n):
+            diff = self.FP[i] - self.FM[i]
+            if diff == 0:
+                diff = 10 ** -10
+            results.append(self.weights[i] * (self.difference[:, i]) / diff)
+        return np.array(results).T
 
-    v = 0.5
-    bestS = max(S)
-    worstS = min(S)
-    bestR = max(R)
-    worstR = min(R)
-    diffS = bestS - worstS
-    diffR = bestR - worstR
+    def calculate_rankings(self):
+        """
+        calculate rankings S, R, Q for calculated matrix
+        :return: rankings S, R, Q
+        """
+        m, n = self.weighted_matrix.shape
+        S = np.round(self.weighted_matrix.sum(axis=1), self.precision)
+        R = np.array([round(max(self.weighted_matrix[i, :]), self.precision) for i in range(m)])
 
-    Q = []
-    for s, r in zip(S, R):
-        qj = v * (s - worstS) / diffS + (1 - v) * (r - worstR) / diffR
-        Q.append(round(qj, Rd))
+        v = 0.5
+        bestS = max(S)
+        worstS = min(S)
+        bestR = max(R)
+        worstR = min(R)
+        diffS = bestS - worstS
+        diffR = bestR - worstR
 
-    return S, R, Q
+        Q = []
+        for s, r in zip(S, R):
+            qj = v * (s - worstS) / diffS + (1 - v) * (r - worstR) / diffR
+            Q.append(round(qj, self.precision))
 
-def vikor(matrix, types, weights, Rd = 2):
-    """
+        return S, R, Q
 
-    :param matrix:
-    :param types:
-    :param weights:
-    :param R:
-    :return:
-    """
-    fP, fM = get_characteristic_values(matrix, types)
-    diff = get_difference(matrix, fP)
-    weighted = get_weighted_value(diff, fP, fM, weights)
-    S, R, Q = calculate_rankings(weighted, Rd)
-    return S, R, Q
+    def run(self):
+        self.FP, self.FM = self.get_extreme_values()
+        self.difference = self.get_difference()
+        self.weighted_matrix = self.get_weighted_matrix()
+        self.rankings = self.calculate_rankings()
+
 
