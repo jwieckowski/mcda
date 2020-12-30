@@ -79,3 +79,9 @@ class TOPSIS:
         self.weighted_matrix = self.weights_multiply()
         self.DP, self.DN = self.calculate_distance()
         self.rankings = self.calculate_rankings()
+
+t = TOPSIS(MenInd, types, w, 2)
+t.run()
+print(t.rankings)
+
+# [0.66 0.69 0.41 0.44 0.44 0.44 0.44 0.47 0.41 0.34 0.34]
