@@ -1,25 +1,19 @@
 """
 script to calculate MCDA TOPSIS method rankings
+
+example:
+matrix = [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
+types = ['cost', cost', 'profit']
+weights = [0.2, 0.45, 0.35]
+precision = 2
+topsis = TOPSIS(matrix, types, weights, precision)
+topsis.run()
+
 """
 import numpy as np
 from normalization import *
 import copy
 
-MenInd = np.array([
-    [15, 32, 782, 1],
-    [14, 32, 780, 1],
-    [13, 32, 769, 2],
-    [12, 32, 769, 2],
-    [11, 32, 765, 2],
-    [10, 32, 735, 2],
-    [9,  31, 707, 2],
-    [8,  30, 686, 2],
-    [7,  29, 662, 3],
-    [6,  27, 614, 5],
-    [5,  25, 580, 6]
-])
-types = ['cost', 'profit', 'profit', 'cost']
-w = [0.25, 0.25, 0.25, 0.25]
 
 class TOPSIS:
     def __init__(self, matrix, types, weights, precision, normalization=sum_normalization):
@@ -80,8 +74,3 @@ class TOPSIS:
         self.DP, self.DN = self.calculate_distance()
         self.rankings = self.calculate_rankings()
 
-t = TOPSIS(MenInd, types, w, 2)
-t.run()
-print(t.rankings)
-
-# [0.66 0.69 0.41 0.44 0.44 0.44 0.44 0.47 0.41 0.34 0.34]

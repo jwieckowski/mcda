@@ -82,7 +82,7 @@ def normalize(matrix, types, method, precision = 2):
     """
 
     if matrix.shape[1] != len(types):
-        print('Sizes doesnt match')
+        print('Sizes does not match')
 
     normalized_matrix = matrix.astype('float')
     for i in range(len(types)):

@@ -1,5 +1,14 @@
 """
 script to calculate MCDA VIKOR method rankings
+
+example:
+matrix = [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
+types = ['cost', cost', 'profit']
+weights = [0.2, 0.45, 0.35]
+precision = 2
+vikor = VIKOR(matrix, types, weights, precision)
+vikor.run()
+
 """
 import numpy as np
 

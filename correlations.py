@@ -37,7 +37,6 @@ def weighted_spearman(x, y):
     :param y: positional ranking 2
     :return: weighted spearman correlations
     """
-
     N = len(x)
     n = 6 * np.sum((x-y)**2 * ((N - x + 1) + (N - y + 1)))
     d = N**4 + N**3 - N**2 - N
@@ -51,7 +50,8 @@ def ws_rank(x, y):
     :param y: positional ranking 2
     :return: ws correlations
     """
-
+    x = np.array(x)
+    y = np.array(y)
     N = len(x)
     n = np.fabs(x - y)
     d = np.max((np.fabs(1 - x), np.fabs(N - x)), axis=0)

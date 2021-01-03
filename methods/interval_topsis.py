@@ -1,25 +1,19 @@
 """
 script to calculate MCDA Interval TOPSIS method rankings
+
+example:
+matrix = [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
+types = ['cost', cost', 'profit']
+weights = [0.2, 0.45, 0.35]
+range = [0.95, 1.05]
+precision = 2
+it = INTERVAL_TOPSIS(matrix, types, weights, range, precision)
+it.run()
+
 """
 import numpy as np
 import copy
 import random
-
-MenInd = np.array([
-    [15, 32, 782, 1],
-    [14, 32, 780, 1],
-    [13, 32, 769, 2],
-    [12, 32, 769, 2],
-    [11, 32, 765, 2],
-    [10, 32, 735, 2],
-    [9,  31, 707, 2],
-    [8,  30, 686, 2],
-    [7,  29, 662, 3],
-    [6,  27, 614, 5],
-    [5,  25, 580, 6]
-])
-types = ['cost', 'profit', 'profit', 'cost']
-w = [0.25, 0.25, 0.25, 0.25]
 
 class INTERVAL_TOPSIS:
     def __init__(self, matrix, types, weights, range, precision):
@@ -56,11 +50,11 @@ class INTERVAL_TOPSIS:
         normalize interval matrix
         :return: normalized interval matrix
         """
-        row, col, l  = self.interval_matrix.shape
+        row, col, l = self.interval_matrix.shape
         self.normalized_matrix = copy.deepcopy(self.interval_matrix)
         for c in range(col):
             d = np.sqrt(np.sum(np.array(self.interval_matrix[:, c]**2).flatten()))
-            self.normalized_matrix[:, c] = np.round(self.interval_matrix[:, c] / d, self.precision)
+            self.normalized_matrix[:, c] = self.interval_matrix[:, c] / d
 
     def weights_multiply(self):
         """
@@ -70,7 +64,7 @@ class INTERVAL_TOPSIS:
         self.weighted_normalized_matrix = copy.deepcopy(self.normalized_matrix)
         row, col, l = self.normalized_matrix.shape
         for c in range(col):
-            self.weighted_normalized_matrix[:, c] = np.round(self.normalized_matrix[:, c] * self.weights[c], self.precision)
+            self.weighted_normalized_matrix[:, c] = self.normalized_matrix[:, c] * self.weights[c]
 
 
     def calculate_distance(self):
